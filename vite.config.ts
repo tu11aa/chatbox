@@ -6,6 +6,6 @@ export default defineConfig({
   base: "/chatbox/",
   plugins: [react()],
   build: {
-    chunkSizeWarningLimit: 1600,
+    chunkSizeWarningLimit: 600,
   },
 })

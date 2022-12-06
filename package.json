@@ -1,7 +1,7 @@
 {
   "name": "chatbox",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "homepage": "https://tu11aa.github.io/chatbox",
   "scripts": {
@@ -15,6 +15,7 @@
     "firebase": "^9.14.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
     "react-router-dom": "^6.4.4",
     "react-toastify": "^9.1.1",
     "styled-components": "^5.3.6"
