@@ -77,6 +77,7 @@ const Chatbox = () => {
   })
 
   useEffect(() => {
+    //@ts-ignore
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chats])
 
