@@ -14,8 +14,10 @@ const Chatbox = () => {
   const [users, setUsers] = useState(Object)
   const [message, setMessage] = useState("")
   const [noitice, setNoitice] = useState("")
+  const [avaIndexs, setAvaIndexs] = useState({})
   const [uid] = useState(window.sessionStorage.getItem("uid"))
-
+  const avaSlide = 5000
+  //set message
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     if (message === "") return
@@ -33,13 +35,13 @@ const Chatbox = () => {
 
     setMessage("")
   }
-
+  //handle enter press
   const handleKeydown = (e: any) => {
     if (e.key === "Enter") {
       handleSubmit(e)
     }
   }
-
+  //get data
   useEffect(() => {
     if (!uid) return navigate("/")
 
@@ -57,7 +59,7 @@ const Chatbox = () => {
     }
     func()
   }, [])
-
+  //realtime chat
   useEffect(() => {
     const func = async () => {
       const unsub = onSnapshot(doc(db, "rooms", "roomSample"), (_doc) => {
@@ -69,25 +71,42 @@ const Chatbox = () => {
           currentRoom?.uids.forEach(async (uid: string) => {
             const userSnap = await getDoc(doc(db, "users", uid))
             setUsers((prev: Object) => ({ ...prev, [uid]: userSnap.data() }))
+            setAvaIndexs((prev: Object) => ({ ...prev, [uid]: 0 }))
           })
         }
       });
     }
     func()
   })
-
+  //alternative method
+  // useEffect(() => {
+  //   for (const uid in users)
+  //     setAvaIndexs((prev: Object) => ({ ...prev, [uid]: Math.floor(Math.random() * users[uid].image.length) }))
+  // }, [users])
+  //auto scroll down
   useEffect(() => {
     //@ts-ignore
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chats])
+  //slide avata
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const temp = {}
+      //@ts-ignore
+      for (const i in avaIndexs) temp[i] = (avaIndexs[i] + 1) % users[i].image.length
+      setAvaIndexs(temp)
+    }, avaSlide);
+    return () => clearTimeout(timer);
+  }, [avaIndexs, users])
 
   return (
     <IconContext.Provider value={{ size: "3rem" }}>
       <div className={styles.wrapper}>
         <div className={styles.container}>
-          <div className={styles.header} onClick={() => console.log(uid && users[uid].image)}>
+          <div className={styles.header}>
             <div className={styles.avatar}>
-              <img src={uid && users[uid]?.image} alt="None" />
+              {/* @ts-ignore */}
+              <img src={uid && users[uid]?.image[avaIndexs[uid]]} alt="Avatar" onClick={() => { window.open(uid && users[uid]?.image[avaIndexs[uid]], "_blank") }} />
             </div>
             <h1>{noitice}</h1>
             <AiOutlineMenu />
@@ -97,12 +116,22 @@ const Chatbox = () => {
               <div className={styles.messageContainer} key={index}>
                 {chat.uid === uid ?
                   <>
-                    <p className={`${styles.message} ${chat.uid === uid && styles.floatRight}`}>{chat.content}</p>
-                    <img src={users[chat.uid]?.image} alt="" />
+                    <p className={`${styles.message} ${styles.floatRight}`}>{chat.content}
+                      <p className={`${styles.floatRight} ${styles.timestamp}`}>{chat.timestamp.toDate().toLocaleDateString('en-US')} {chat.timestamp.toDate().toLocaleTimeString('en-US')}</p>
+                    </p>
                   </> :
                   <>
-                    <img src={users[chat.uid]?.image} alt="" />
-                    <p className={`${styles.message} ${chat.uid === uid && styles.floatRight}`}>{chat.content}</p>
+                    {//@ts-ignore
+                      (chats[index - 1] != undefined && chats[index - 1].uid !== chat.uid) &&
+                      <div className={styles.displayName}>
+                        {/* @ts-ignore */}
+                        <img src={users[chat.uid]?.image[avaIndexs[chat.uid]]} alt="" onClick={() => { window.open(users[chat.uid]?.image[avaIndexs[chat.uid]], "_blank") }} />
+                        <span>{users[chat.uid].displayName}</span>
+                      </div>
+                    }
+                    <p className={styles.message}>{chat.content}
+                      <p className={styles.timestamp}>{chat.timestamp.toDate().toLocaleDateString('en-US')} {chat.timestamp.toDate().toLocaleTimeString('en-US')}</p>
+                    </p>
                   </>
                 }
               </div>
