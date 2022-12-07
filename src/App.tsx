@@ -9,11 +9,12 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login/>}/>
-          <Route path="/chatbox" element={<Chatbox/>}/>
+          {/* @ts-ignore */}
+          <Route exact path="/" element={<Login />} />
+          <Route path="/chatbox" element={<Chatbox />} />
         </Routes>
       </BrowserRouter>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   )
 }

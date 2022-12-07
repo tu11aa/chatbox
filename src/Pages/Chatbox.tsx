@@ -126,7 +126,7 @@ const Chatbox = () => {
                       <div className={styles.displayName}>
                         {/* @ts-ignore */}
                         <img src={users[chat.uid]?.image[avaIndexs[chat.uid]]} alt="" onClick={() => { window.open(users[chat.uid]?.image[avaIndexs[chat.uid]], "_blank") }} />
-                        <span>{users[chat.uid].displayName && users[chat.uid].displayName}</span>
+                        <span>{users[chat.uid]?.displayName}</span>
                       </div>
                     }
                     <p className={styles.message}>{chat.content}
